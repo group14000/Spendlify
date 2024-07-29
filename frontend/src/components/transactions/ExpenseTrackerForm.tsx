@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import styles from './ExpenseTrackerForm.module.css';
-
 
 const ExpenseTrackerForm: React.FC = () => {
     const [amount, setAmount] = useState('');
@@ -11,13 +11,31 @@ const ExpenseTrackerForm: React.FC = () => {
     const [description, setDescription] = useState('');
     const [receiver, setReceiver] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log({ amount, date, type, category, paymentMethod, description, receiver });
+        
+        const transactionData = { 
+            amount, 
+            date, 
+            type, 
+            category, 
+            paymentMethod, 
+            description, 
+            receiver 
+        };
+
+        try {
+            const response = await axios.post('http://localhost:3000/api/expenses', transactionData);
+            console.log(response.data);
+            // Optionally reset the form or show a success message
+        } catch (error) {
+            console.error('There was an error submitting the form!', error);
+            // Optionally show an error message
+        }
     };
 
     return (
-        <div className={`max-w-md mx-auto mt-10 p-6  rounded-lg shadow-md ${styles.expenseTracker}`}>
+        <div className={`max-w-md mx-auto mt-10 p-6 rounded-lg shadow-md ${styles.expenseTracker}`}>
             <h2 className="text-3xl font-semibold mb-6 text-white">Add Transaction</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
@@ -103,6 +121,7 @@ const ExpenseTrackerForm: React.FC = () => {
                         type="button"
                         className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-700"
                         onClick={() => {
+                            // Optionally reset the form or add cancel functionality
                         }}
                     >
                         Cancel
